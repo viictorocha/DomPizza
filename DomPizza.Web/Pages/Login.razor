@@ -1,0 +1,37 @@
+﻿@page "/login"
+@using System.Net.Http.Json
+@inject HttpClient Http
+@inject NavigationManager Nav
+
+<h3>Login</h3>
+
+<div>
+    <input @bind="Email" placeholder="Email" />
+    <input @bind="Senha" placeholder="Senha" type="password" />
+    <button @onclick="EfetuarLogin">Entrar</button>
+</div>
+
+@code {
+    string Email = "";
+    string Senha = "";
+
+    private async Task EfetuarLogin()
+    {
+        var result = await Http.PostAsJsonAsync("https://localhost:5001/login", new { Email, Senha });
+        if (result.IsSuccessStatusCode)
+        {
+            var tokenResponse = await result.Content.ReadFromJsonAsync<TokenResponse>();
+            Console.WriteLine($"Token: {tokenResponse?.token}");
+            Nav.NavigateTo("/");
+        }
+        else
+        {
+            Console.WriteLine("Falha no login");
+        }
+    }
+
+    public class TokenResponse
+    {
+        public string token { get; set; } = string.Empty;
+    }
+}
