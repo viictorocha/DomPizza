@@ -1,37 +1,48 @@
 ﻿@page "/login"
-@using System.Net.Http.Json
-@inject HttpClient Http
-@inject NavigationManager Nav
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@using DomPizza.App.Models
+@using DomPizza.App.Services
 
-<h3>Login</h3>
+<h3>🔐 Login</h3>
 
-<div>
-    <input @bind="Email" placeholder="Email" />
-    <input @bind="Senha" placeholder="Senha" type="password" />
-    <button @onclick="EfetuarLogin">Entrar</button>
-</div>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<EditForm Model="login" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Email</label>
+        <InputText class="form-control" @bind-Value="login.Email" />
+    </div>
+
+    <div class="mb-3">
+        <label>Senha</label>
+        <InputText type="password" class="form-control" @bind-Value="login.Senha" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Entrar</button>
+</EditForm>
 
 @code {
-    string Email = "";
-    string Senha = "";
+    private LoginDTO login = new();
+    private string? errorMessage;
 
-    private async Task EfetuarLogin()
+    private async Task HandleLogin()
     {
-        var result = await Http.PostAsJsonAsync("https://localhost:5001/login", new { Email, Senha });
-        if (result.IsSuccessStatusCode)
+        var success = await AuthService.LoginAsync(login);
+
+        if (success)
         {
-            var tokenResponse = await result.Content.ReadFromJsonAsync<TokenResponse>();
-            Console.WriteLine($"Token: {tokenResponse?.token}");
-            Nav.NavigateTo("/");
+            Navigation.NavigateTo("/perfil");
         }
         else
         {
-            Console.WriteLine("Falha no login");
+            errorMessage = "Email ou senha incorretos.";
         }
-    }
-
-    public class TokenResponse
-    {
-        public string token { get; set; } = string.Empty;
     }
 }

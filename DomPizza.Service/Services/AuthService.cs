@@ -30,7 +30,7 @@ public class AuthService : IAuthService
         var hasher = new PasswordHasher<Usuario>();
         //var senha = hasher.HashPassword(usuario, "string");
 
-        var result = hasher.VerifyHashedPassword(null, usuario.SenhaHash, dto.Senha);
+        var result = hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, dto.Senha);
         if (result == PasswordVerificationResult.Failed) return null;
 
         var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"]!);

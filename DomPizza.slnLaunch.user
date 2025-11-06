@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Novo Perfil",
+    "Projects": [
+      {
+        "Path": "DomPizza.API\\DomPizza.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "DomPizza.Web\\DomPizza.Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
