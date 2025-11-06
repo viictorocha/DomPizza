@@ -1,0 +1,11 @@
+/.vs
+/DomPizza.API/bin
+/DomPizza.API/obj
+/DomPizza.Data/bin
+/DomPizza.Data/obj
+/DomPizza.Domain/bin
+/DomPizza.Domain/obj
+/DomPizza.Service/bin
+/DomPizza.Service/obj
+/DomPizza.Web/bin
+/DomPizza.Web/obj
