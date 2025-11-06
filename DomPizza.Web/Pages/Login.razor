@@ -1,32 +1,37 @@
 ﻿@page "/login"
+@layout LayoutBase
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 @using DomPizza.App.Models
 @using DomPizza.App.Services
 
-<h3>🔐 Login</h3>
+<div class="login-container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow-sm" style="min-width: 320px; max-width: 400px; width: 100%;">
+        <h3 class="text-center mb-4">🔐 Login</h3>
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger">@errorMessage</div>
-}
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
 
-<EditForm Model="login" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+        <EditForm Model="login" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-    <div class="mb-3">
-        <label>Email</label>
-        <InputText class="form-control" @bind-Value="login.Email" />
+            <div class="mb-3">
+                <label>Email</label>
+                <InputText class="form-control" @bind-Value="login.Email" />
+            </div>
+
+            <div class="mb-3">
+                <label>Senha</label>
+                <InputText type="password" class="form-control" @bind-Value="login.Senha" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </EditForm>
     </div>
-
-    <div class="mb-3">
-        <label>Senha</label>
-        <InputText type="password" class="form-control" @bind-Value="login.Senha" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Entrar</button>
-</EditForm>
+</div>
 
 @code {
     private LoginDTO login = new();

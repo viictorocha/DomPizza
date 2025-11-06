@@ -13,6 +13,15 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorDev",
+        policy => policy
+            .WithOrigins("https://localhost:7252")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 builder.Services.AddDbContext<DomPizzaContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -71,14 +80,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+app.UseCors("AllowBlazorDev");
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.RoutePrefix = string.Empty; // Swagger abre direto na raiz
-    });
+    app.UseSwaggerUI();
 }
 
 app.UseAuthentication();

@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using DomPizza.App.Models;
+using Microsoft.JSInterop;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -11,32 +12,46 @@ public class AuthService
     private readonly HttpClient _http;
     private readonly IConfiguration _config;
     private readonly ILocalStorageService _localStorage;
+    private readonly IJSRuntime _jsRuntime;
 
-    public AuthService(HttpClient http, IConfiguration config, ILocalStorageService localStorage)
+    public AuthService(HttpClient http, IConfiguration config, ILocalStorageService localStorage, IJSRuntime jsRuntime)
     {
         _http = http;
         _config = config;
         _localStorage = localStorage;
+        _jsRuntime = jsRuntime;
     }
 
     public async Task<bool> LoginAsync(LoginDTO dto)
     {
-        var response = await _http.PostAsJsonAsync("login", dto);
+        try
+        {
+            var response = await _http.PostAsJsonAsync("https://localhost:7193/login", dto);
 
-        if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
+            {
+                var msg = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Login falhou: {msg}");
+                return false;
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+            if (result != null)
+            {
+                // salvar token no localStorage
+                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "token", result.Token);
+                return true;
+            }
+
             return false;
-
-        var content = await response.Content.ReadFromJsonAsync<JsonElement>();
-        var token = content.GetProperty("token").GetString();
-
-        if (token is null)
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro na requisição: {ex.Message}");
             return false;
-
-        await _localStorage.SetItemAsync("authToken", token);
-        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        return true;
+        }
     }
+
 
     public async Task LogoutAsync()
     {
