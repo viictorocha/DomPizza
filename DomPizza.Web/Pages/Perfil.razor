@@ -3,15 +3,16 @@
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
-<h3>Bem-vindo ao seu perfil!</h3>
-
 @if (!autenticado)
 {
     <p>Redirecionando para login...</p>
 }
 else
 {
-    <p>Conteúdo protegido 🔒</p>
+    <div class="home-container">
+        <h3>Bem-vindo ao seu perfil!</h3>
+        <p>Conteúdo protegido 🔒</p>
+    </div>
 }
 
 @code {
