@@ -1,6 +1,6 @@
 [
   {
-    "Name": "Novo Perfil",
+    "Name": "Desenvolvimento",
     "Projects": [
       {
         "Path": "DomPizza.API\\DomPizza.API.csproj",

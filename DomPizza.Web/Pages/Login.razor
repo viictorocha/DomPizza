@@ -2,8 +2,10 @@
 @layout LayoutBase
 @inject AuthService AuthService
 @inject NavigationManager Navigation
-@using DomPizza.App.Models
-@using DomPizza.App.Services
+@inject CustomAuthStateProvider AuthProvider
+
+@using DomPizza.Web.Models
+@using DomPizza.Web.Services
 
 <div class="login-container d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4 shadow-sm" style="min-width: 320px; max-width: 400px; width: 100%;">
@@ -43,7 +45,7 @@
 
         if (success)
         {
-            Navigation.NavigateTo("/perfil");
+            Navigation.NavigateTo("/Home");
         }
         else
         {

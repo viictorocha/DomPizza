@@ -1,4 +1,4 @@
-﻿namespace DomPizza.App.Models;
+﻿namespace DomPizza.Web.Models;
 
 public class LoginDTO
 {

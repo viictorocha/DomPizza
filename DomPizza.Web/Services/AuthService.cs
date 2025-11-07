@@ -1,66 +1,66 @@
 ﻿using Blazored.LocalStorage;
-using DomPizza.App.Models;
-using Microsoft.JSInterop;
-using System.Net.Http.Headers;
+using DomPizza.Web.Models;
 using System.Net.Http.Json;
-using System.Text.Json;
+using System.Net.Http.Headers;
 
-namespace DomPizza.App.Services;
-
-public class AuthService
+namespace DomPizza.Web.Services
 {
-    private readonly HttpClient _http;
-    private readonly IConfiguration _config;
-    private readonly ILocalStorageService _localStorage;
-    private readonly IJSRuntime _jsRuntime;
-
-    public AuthService(HttpClient http, IConfiguration config, ILocalStorageService localStorage, IJSRuntime jsRuntime)
+    public class AuthService
     {
-        _http = http;
-        _config = config;
-        _localStorage = localStorage;
-        _jsRuntime = jsRuntime;
-    }
+        private readonly HttpClient _http;
+        private readonly ILocalStorageService _localStorage;
+        private readonly CustomAuthStateProvider _authProvider;
 
-    public async Task<bool> LoginAsync(LoginDTO dto)
-    {
-        try
+        public AuthService(HttpClient http, ILocalStorageService localStorage, CustomAuthStateProvider authProvider)
         {
-            var response = await _http.PostAsJsonAsync("https://localhost:7193/login", dto);
+            _http = http;
+            _localStorage = localStorage;
+            _authProvider = authProvider;
+        }
 
-            if (!response.IsSuccessStatusCode)
+        public async Task<bool> LoginAsync(LoginDTO dto)
+        {
+            try
             {
-                var msg = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Login falhou: {msg}");
-                return false;
-            }
+                var response = await _http.PostAsJsonAsync("login", dto);
 
-            var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-            if (result != null)
-            {
-                // salvar token no localStorage
-                await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "token", result.Token);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var msg = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Login falhou: {msg}");
+                    return false;
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                if (result == null || string.IsNullOrEmpty(result.Token))
+                    return false;
+
+                await _localStorage.SetItemAsync("token", result.Token);
+
+                _http.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", result.Token);
+
+                _authProvider.NotifyUserAuthentication(result.Token);
+
                 return true;
             }
-
-            return false;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro no login: {ex.Message}");
+                return false;
+            }
         }
-        catch (Exception ex)
+
+        public async Task LogoutAsync()
         {
-            Console.WriteLine($"Erro na requisição: {ex.Message}");
-            return false;
+            await _localStorage.RemoveItemAsync("token");
+            _http.DefaultRequestHeaders.Authorization = null;
+            _authProvider.NotifyUserLogout();
         }
-    }
 
-
-    public async Task LogoutAsync()
-    {
-        await _localStorage.RemoveItemAsync("authToken");
-        _http.DefaultRequestHeaders.Authorization = null;
-    }
-
-    public async Task<string?> GetTokenAsync()
-    {
-        return await _localStorage.GetItemAsync<string>("authToken");
+        public async Task<string?> GetTokenAsync()
+        {
+            return await _localStorage.GetItemAsync<string>("token");
+        }
     }
 }

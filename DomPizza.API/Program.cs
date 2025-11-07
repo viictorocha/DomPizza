@@ -13,15 +13,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowBlazorDev",
-        policy => policy
-            .WithOrigins("https://localhost:7252")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    options.AddPolicy("AllowBlazorDev", policy =>
+        policy.WithOrigins("http://localhost:5118")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
+// DB + Dependências
 builder.Services.AddDbContext<DomPizzaContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -47,13 +49,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// Swagger com suporte a JWT
+// Swagger + JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DomPizza API", Version = "v1" });
 
-    // Define o esquema de segurança JWT
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -66,12 +67,15 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityDefinition("Bearer", securityScheme);
 
-    // Requer o uso do token em endpoints protegidos
     var securityRequirement = new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme { Reference = new OpenApiReference
-                { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
             Array.Empty<string>()
         }
     };
@@ -80,7 +84,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-app.UseCors("AllowBlazorDev");
 
 if (app.Environment.IsDevelopment())
 {
@@ -88,17 +91,25 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Middleware
+app.UseCors("AllowBlazorDev");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Login
+// === ROTAS MINIMAL API ===
+
+// Login público
 app.MapPost("/login", async (IAuthService authService, DomPizza.Service.DTOs.LoginDTO dto) =>
 {
     var token = await authService.AutenticarAsync(dto);
-    return token is null ? Results.Unauthorized() : Results.Ok(new { token });
-});
+    return token is null
+        ? Results.Unauthorized()
+        : Results.Ok(new { token });
+})
+.WithName("Login")
+.WithTags("Autenticação");
 
-// Endpoint protegido
+// Rota protegida
 app.MapGet("/usuario/perfil", [Authorize] (ClaimsPrincipal user) =>
 {
     var nome = user.Identity?.Name;

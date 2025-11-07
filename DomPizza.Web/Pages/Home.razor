@@ -1,0 +1,36 @@
+﻿@page "/Home"
+@layout MainLayout
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<h3>Bem-vindo ao seu perfil!</h3>
+
+@if (!autenticado)
+{
+    <p>Redirecionando para login...</p>
+}
+else
+{
+    <div class="home-container">
+        <h1>🏠 Bem-vindo ao Sistema</h1>
+        <p>Acesse o menu ou faça login para continuar.</p>
+    </div>
+}
+
+@code {
+    private bool autenticado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await JS.InvokeAsync<string>("localStorage.getItem", "token");
+
+        if (string.IsNullOrEmpty(token))
+        {
+            Navigation.NavigateTo("/login", true);
+        }
+        else
+        {
+            autenticado = true;
+        }
+    }
+}

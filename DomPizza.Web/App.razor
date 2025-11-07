@@ -1,23 +1,38 @@
-﻿@inject NavigationManager Navigation
-
-<Router AppAssembly="@typeof(App).Assembly">
+﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(LayoutBase)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
+
     <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+        <PageTitle>Página não encontrada</PageTitle>
+        <LayoutView Layout="@typeof(LayoutBase)">
+            <div class="notfound-container">
+                <div class="notfound-icon">🚫</div>
+                <h1 class="notfound-title">Página não encontrada</h1>
+                <p class="notfound-text">
+                    O endereço que você tentou acessar não existe ou foi movido.
+                </p>
+
+                <button class="notfound-button" @onclick="VoltarParaInicio">
+                    Voltar ao início
+                </button>
+            </div>
         </LayoutView>
     </NotFound>
 </Router>
 
 @code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private void VoltarParaInicio()
+    {
+        Navigation.NavigateTo("/login");
+    }
+
     protected override void OnInitialized()
     {
         var uri = Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/');
-
         if (string.IsNullOrEmpty(uri))
         {
             Navigation.NavigateTo("/login", true);
