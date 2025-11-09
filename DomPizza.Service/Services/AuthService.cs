@@ -28,7 +28,7 @@ public class AuthService : IAuthService
         if (usuario == null) return null;
 
         var hasher = new PasswordHasher<Usuario>();
-        //var senha = hasher.HashPassword(usuario, "string");
+        //var senha = hasher.HashPassword(usuario, "DomPizza@ADM01");
 
         var result = hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, dto.Senha);
         if (result == PasswordVerificationResult.Failed) return null;

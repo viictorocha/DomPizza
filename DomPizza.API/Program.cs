@@ -24,9 +24,7 @@ builder.Services.AddCors(options =>
 });
 
 // DB + Dependências
-builder.Services.AddDbContext<DomPizzaContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddDbContext<DomPizzaContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -109,7 +107,26 @@ app.MapPost("/login", async (IAuthService authService, DomPizza.Service.DTOs.Log
 .WithName("Login")
 .WithTags("Autenticação");
 
-// Rota protegida
+// Rota usuario protegido
+app.MapGet("/usuario", [Authorize] (ClaimsPrincipal user) =>
+{
+    var nome = user.FindFirst(ClaimTypes.Name)?.Value;
+    var email = user.FindFirst(ClaimTypes.Email)?.Value;
+
+    return Results.Ok(new
+    {
+        Nome = nome,
+        Email = email,
+        Mensagem = "Acesso autorizado. Bem-vindo ao seu perfil!"
+    });
+})
+.WithName("Usuario")
+.WithTags("Usuário");
+
+
+
+
+// Rota perfil do usuário
 app.MapGet("/usuario/perfil", [Authorize] (ClaimsPrincipal user) =>
 {
     var nome = user.Identity?.Name;
