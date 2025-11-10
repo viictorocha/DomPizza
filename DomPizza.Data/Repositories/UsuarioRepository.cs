@@ -22,4 +22,15 @@ public class UsuarioRepository : IUsuarioRepository
         _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();
     }
+    public async Task<Usuario?> ObterCompletoPorEmailAsync(string email)
+    {
+        return await _context.Usuarios
+            .Include(u => u.UsuarioRoles)
+                .ThenInclude(ur => ur.Role)
+                    .ThenInclude(r => r.RolePermissoes)
+                        .ThenInclude(rp => rp.Permissao)
+            .FirstOrDefaultAsync(u => u.Email == email);
+    }
+
+
 }

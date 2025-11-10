@@ -1,4 +1,5 @@
-﻿using DomPizza.Service.DTOs;
+﻿using DomPizza.Domain.Entities;
+using DomPizza.Service.DTOs;
 
 namespace DomPizza.Service.Interfaces;
 

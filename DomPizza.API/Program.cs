@@ -2,7 +2,6 @@ using DomPizza.Data.Context;
 using DomPizza.Data.Repositories;
 using DomPizza.Domain.Interfaces;
 using DomPizza.Service.Interfaces;
-using DomPizza.Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -106,25 +105,6 @@ app.MapPost("/login", async (IAuthService authService, DomPizza.Service.DTOs.Log
 })
 .WithName("Login")
 .WithTags("Autenticação");
-
-// Rota usuario protegido
-app.MapGet("/usuario", [Authorize] (ClaimsPrincipal user) =>
-{
-    var nome = user.FindFirst(ClaimTypes.Name)?.Value;
-    var email = user.FindFirst(ClaimTypes.Email)?.Value;
-
-    return Results.Ok(new
-    {
-        Nome = nome,
-        Email = email,
-        Mensagem = "Acesso autorizado. Bem-vindo ao seu perfil!"
-    });
-})
-.WithName("Usuario")
-.WithTags("Usuário");
-
-
-
 
 // Rota perfil do usuário
 app.MapGet("/usuario/perfil", [Authorize] (ClaimsPrincipal user) =>
