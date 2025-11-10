@@ -3,6 +3,7 @@ using DomPizza.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DomPizza.Data.Migrations
 {
     [DbContext(typeof(DomPizzaContext))]
-    partial class DomPizzaContextModelSnapshot : ModelSnapshot
+    [Migration("20251110005250_SeedUsuarioInicial")]
+    partial class SeedUsuarioInicial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,7 +207,7 @@ namespace DomPizza.Data.Migrations
                             Id = 1,
                             Email = "DomPizza@adm",
                             Nome = "Administrador DomPizza",
-                            SenhaHash = "AQAAAAIAAYagAAAAEFyhC+iz5ABqnQQcYhzlmStnBaOGghPJOJPyK5jTrFo1Blt5ceMGtZ7+JuBSZ7daYg=="
+                            SenhaHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"
                         });
                 });
 

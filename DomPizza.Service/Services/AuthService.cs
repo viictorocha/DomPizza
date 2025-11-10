@@ -2,8 +2,8 @@
 using DomPizza.Domain.Interfaces;
 using DomPizza.Service.DTOs;
 using DomPizza.Service.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -24,6 +24,7 @@ public class AuthService : IAuthService
 
     public async Task<string?> AutenticarAsync(LoginDTO dto)
     {
+
         var usuario = await _repo.ObterPorEmailAsync(dto.Email);
         if (usuario == null) return null;
 

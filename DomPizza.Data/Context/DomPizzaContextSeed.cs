@@ -38,6 +38,22 @@ namespace DomPizza.Data.Context
                 // Leitor – apenas leitura
                 new RolePermissao { RoleId = 3, PermissaoId = 1 }
             );
+
+            // === Usuário Administrador ===
+            modelBuilder.Entity<Usuario>().HasData(
+                new Usuario
+                {
+                    Id = 1,
+                    Nome = "Administrador DomPizza",
+                    Email = "DomPizza@adm",
+                    SenhaHash = "AQAAAAIAAYagAAAAEFyhC+iz5ABqnQQcYhzlmStnBaOGghPJOJPyK5jTrFo1Blt5ceMGtZ7+JuBSZ7daYg=="
+                }
+            );
+
+            // === Relacionar Usuário ao Role de Administrador ===
+            modelBuilder.Entity<UsuarioRole>().HasData(
+                new UsuarioRole { UsuarioId = 1, RoleId = 1 }
+            );
         }
     }
 }
