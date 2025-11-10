@@ -3,6 +3,7 @@ using DomPizza.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DomPizza.Data.Migrations
 {
     [DbContext(typeof(DomPizzaContext))]
-    partial class DomPizzaContextModelSnapshot : ModelSnapshot
+    [Migration("20251109235032_SeedRolesAndPermissoes")]
+    partial class SeedRolesAndPermissoes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,36 +47,6 @@ namespace DomPizza.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Permissoes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Acao = "Ler",
-                            Descricao = "Pode visualizar usuários",
-                            Tipo = "Usuario"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Acao = "Criar",
-                            Descricao = "Pode criar usuários",
-                            Tipo = "Usuario"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Acao = "Editar",
-                            Descricao = "Pode editar usuários",
-                            Tipo = "Usuario"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Acao = "Excluir",
-                            Descricao = "Pode excluir usuários",
-                            Tipo = "Usuario"
-                        });
                 });
 
             modelBuilder.Entity("DomPizza.Domain.Entities.Role", b =>
@@ -95,26 +68,6 @@ namespace DomPizza.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Descricao = "Acesso total ao sistema",
-                            Nome = "Administrador"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Descricao = "Gestão de usuários e produtos",
-                            Nome = "Operador"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Descricao = "Acesso somente leitura",
-                            Nome = "Leitor"
-                        });
                 });
 
             modelBuilder.Entity("DomPizza.Domain.Entities.RolePermissao", b =>
@@ -130,48 +83,6 @@ namespace DomPizza.Data.Migrations
                     b.HasIndex("PermissaoId");
 
                     b.ToTable("RolePermissoes");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            PermissaoId = 1
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissaoId = 2
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissaoId = 3
-                        },
-                        new
-                        {
-                            RoleId = 1,
-                            PermissaoId = 4
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissaoId = 1
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissaoId = 2
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            PermissaoId = 3
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            PermissaoId = 1
-                        });
                 });
 
             modelBuilder.Entity("DomPizza.Domain.Entities.Usuario", b =>
